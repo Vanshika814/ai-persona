@@ -1,0 +1,28 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.python-version
+
+# Node
+node_modules/
+.next/
+dist/
+.turbo/
+
+# Data
+data/resume/*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
