@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 
 import uvicorn
 from dotenv import load_dotenv
@@ -52,6 +53,12 @@ async def root() -> dict[str, str]:
     return {"status": "online", "service": "Vanshika AI Persona Backend"}
 
 
+@app.get("/health")
+async def health() -> dict[str, str]:
+    """Health check endpoint for Railway."""
+    return {"status": "ok"}
+
+
 @app.post("/vapi/tool-call")
 async def vapi_tool_call() -> dict[str, str]:
     """Vapi webhook placeholder — will be implemented in the voice agent branch."""
@@ -63,4 +70,10 @@ async def vapi_tool_call() -> dict[str, str]:
 # ──────────────────────────────────────────────
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run(
+    "main:app",
+    host="0.0.0.0",
+    port=int(os.environ.get("PORT", 8000))
+)
+
