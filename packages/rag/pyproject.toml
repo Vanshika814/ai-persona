@@ -4,4 +4,12 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "httpx",
+    "pypdf",
+    "openai",
+    "supabase",
+    "python-dotenv",
+    "tiktoken",
+    "google-genai>=2.8.0",
+]
