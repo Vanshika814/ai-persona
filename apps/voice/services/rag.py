@@ -234,3 +234,34 @@ async def retrieve_from_source(
     except Exception as exc:
         print(f"[rag] retrieve_from_source error: {exc}")
         return ""
+
+
+def check_health() -> dict[str, str]:
+    """Check Supabase and Gemini configuration and health."""
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
+    gemini_key = os.getenv("GEMINI_API_KEY")
+
+    errors = []
+    if not supabase_url:
+        errors.append("SUPABASE_URL is not set")
+    if not supabase_key:
+        errors.append("SUPABASE_SERVICE_KEY is not set")
+    if not gemini_key:
+        errors.append("GEMINI_API_KEY is not set")
+
+    if errors:
+        return {"status": "unhealthy", "error": ", ".join(errors)}
+
+    try:
+        _get_gemini_client()
+    except Exception as exc:
+        return {"status": "unhealthy", "error": f"Gemini init failed: {exc}"}
+
+    try:
+        supabase = _get_supabase_client()
+        supabase.table("documents").select("id").limit(1).execute()
+    except Exception as exc:
+        return {"status": "unhealthy", "error": f"Supabase check failed: {exc}"}
+
+    return {"status": "healthy"}

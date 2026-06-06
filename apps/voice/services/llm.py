@@ -223,3 +223,15 @@ def is_calendar_intent(message: str) -> bool:
     """
     words = set(message.lower().split())
     return bool(words & _CALENDAR_KEYWORDS)
+
+
+def check_health() -> dict[str, str]:
+    """Check Groq configuration and initialization health."""
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        return {"status": "unhealthy", "error": "GROQ_API_KEY is not set"}
+    try:
+        get_groq_client()
+        return {"status": "healthy"}
+    except Exception as exc:
+        return {"status": "unhealthy", "error": str(exc)}

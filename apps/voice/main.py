@@ -12,9 +12,13 @@ load_dotenv()
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from routers.chat import router as chat_router
 from routers.calendar import router as calendar_router
+from routers.vapi import router as vapi_router
+from services.llm import check_health as check_llm_health
+from services.rag import check_health as check_rag_health
 
 # ──────────────────────────────────────────────
 #  Logging
@@ -43,6 +47,7 @@ app.add_middleware(
 
 app.include_router(chat_router)
 app.include_router(calendar_router)
+app.include_router(vapi_router)
 
 
 # ──────────────────────────────────────────────
@@ -57,15 +62,24 @@ async def root() -> dict[str, str]:
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:
-    """Health check endpoint for Railway."""
-    return {"status": "ok"}
+async def health() -> JSONResponse:
+    """Health check endpoint that runs diagnostics on downstream services."""
+    llm_status = check_llm_health()
+    rag_status = check_rag_health()
 
+    is_healthy = llm_status["status"] == "healthy" and rag_status["status"] == "healthy"
 
-@app.post("/vapi/tool-call")
-async def vapi_tool_call() -> dict[str, str]:
-    """Vapi webhook placeholder — will be implemented in the voice agent branch."""
-    return {"result": "ok"}
+    content = {
+        "status": "healthy" if is_healthy else "unhealthy",
+        "services": {
+            "llm": llm_status,
+            "rag": rag_status,
+        },
+    }
+
+    status_code = 200 if is_healthy else 503
+    return JSONResponse(status_code=status_code, content=content)
+
 
 
 # ──────────────────────────────────────────────
