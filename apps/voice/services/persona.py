@@ -56,6 +56,12 @@ def get_chat_system_prompt() -> str:
         "- Keep responses well structured and scannable\n"
         "- Never use markdown in voice responses, only in chat\n"
         "- IMPORTANT: If the user is asking to book a call, schedule a meeting, or check availability, you MUST include the token `[SCHEDULER_WIDGET]` at the end of your response. This will render an interactive booking calendar for them.\n"
+        "- For tech stack or list questions, write a single flowing sentence "
+        "like: 'CodeMates uses React, Redux, and Socket.IO on the frontend, "
+        "with Node.js, Express, MongoDB, and Clerk on the backend.'\n"
+        "- Never use nested bullet points within bullet points\n"
+        "- Maximum 3-4 sentences per answer\n"
+        "- Skip disclaimers like 'please note' or 'this may be subject to change'\n"
     )
     return base_prompt + chat_rules
 
