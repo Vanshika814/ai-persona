@@ -1,0 +1,568 @@
+{
+  "generated_at": "2026-06-06T23:05:42.887620",
+  "hallucination": {
+    "hallucination_rate": 0.0,
+    "total_questions": 25,
+    "evaluated": 9,
+    "hallucinated_count": 0,
+    "details": [
+      {
+        "question": "What university did Vanshika attend?",
+        "response": "I attended Bennett University in Greater Noida, UP, where I pursued a Bachelor of Technology in Computer Science.",
+        "expected_keywords": [
+          "Bennett University"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response includes the expected keyword \"Bennett University\" and does not contain any made-up facts, invented projects, fake technologies, or information that contradicts the known facts."
+      },
+      {
+        "question": "What degree is Vanshika pursuing?",
+        "response": "I'm pursuing a Bachelor of Technology in Computer Science at Bennett University, Greater Noida, UP. My expected completion date is May 2026, and I've currently achieved a CGPA of 8.1.",
+        "expected_keywords": [
+          "Bachelor of technology",
+          "Computer Science"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response only mentions pursuing a Bachelor of Technology in Computer Science, which aligns with the known facts and includes the expected keywords without introducing any made-up information."
+      },
+      {
+        "question": "What is Vanshika's CGPA?",
+        "response": "My CGPA is 8.1. I achieved this during my Bachelor of Technology in Computer Science at Bennett University, Greater Noida, UP.",
+        "expected_keywords": [
+          "8.1"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response includes the expected keyword \"8.1\" and does not contain any made-up facts, invented projects, fake technologies, or information that contradicts the known facts."
+      },
+      {
+        "question": "When does Vanshika graduate?",
+        "response": "I'm expected to graduate in May 2026, as I'm currently pursuing my Bachelor of Technology in Computer Science at Bennett University. Regarding scheduling, I'd be happy to check my availability. Could you please let me know what you'd like to schedule, and I'll propose some time slots that work for m",
+        "expected_keywords": [
+          "2026"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response only mentions the expected keyword \"2026\" and provides a plausible and factual-sounding statement about graduating, without introducing any made-up facts or contradictions."
+      },
+      {
+        "question": "What is Vanshika's research paper about?",
+        "response": "My research paper is about \"Hybrid Deep Learning Architectures for Diabetic Retinopathy Detection: A Comparative Study of CNNs, VGG16, and Vision Transformers for medical image classification.\" In it, I applied deep learning model evaluation, performance benchmarking, and documentation of research f",
+        "expected_keywords": [
+          "Diabetic Retinopathy",
+          "CNN",
+          "VGG16",
+          "Vision Transformers"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response includes expected keywords such as Diabetic Retinopathy, CNN, VGG16, and Vision Transformers, and does not contain any obvious made-up facts, invented projects, or information that contradicts the known facts."
+      },
+      {
+        "question": "Where was Vanshika's research paper accepted?",
+        "response": "My research paper, \"Hybrid Deep Learning Architectures for Diabetic Retinopathy Detection: A Comparative Study of CNNs, VGG16, and Vision Transformers for medical image classification,\" was accepted at the International Journal of Computer Applications (IJCA) for the June 2025 edition.",
+        "expected_keywords": [
+          "IJCA",
+          "International Journal of Computer Applications"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response includes the expected keywords \"International Journal of Computer Applications\" and \"IJCA\", and does not introduce any information that contradicts the known facts."
+      },
+      {
+        "question": "What open-source program did Vanshika contribute to?",
+        "response": "I contributed to GirlScript Summer of Code (GSSOC) as a remote contributor. I worked on several projects, including PrepBuddy, Codify, and Flash Fathom-AI, and raised over 20 merged pull requests as a full-stack developer.",
+        "expected_keywords": [
+          "GirlScript Summer of Code",
+          "GSSOC"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response includes the expected keywords \"GirlScript Summer of Code\" and \"GSSOC\", and does not contain any made-up facts, invented projects, fake technologies, or information that contradicts the known facts."
+      },
+      {
+        "question": "What rank did Vanshika achieve in GSSOC?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97444, Requested 3351. Please try again in 11m26.88s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What payment integration did Vanshika implement?",
+        "response": "I implemented a secure Razorpay webhook-based payment integration during my time as a contributor at GirlScript Summer of Code (GSSOC).",
+        "expected_keywords": [
+          "Razorpay"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response includes the expected keyword \"Razorpay\" and does not contain any made-up facts, invented projects, fake technologies, or information that contradicts the known facts."
+      },
+      {
+        "question": "What tech stack does DwellDuo use?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99353, Requested 1989. Please try again in 19m19.488s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What is DwellDuo?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99352, Requested 1710. Please try again in 15m17.568s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What authentication method does DwellDuo use?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99352, Requested 1969. Please try again in 19m1.344s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "Does DwellDuo support real-time features?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99351, Requested 1989. Please try again in 19m17.76s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What is CodeMates?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99350, Requested 1578. Please try again in 13m21.792s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What tech stack does CodeMates use?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99349, Requested 1819. Please try again in 16m49.151999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What real-time technology does CodeMates use?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99348, Requested 1560. Please try again in 13m4.512s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What is Resume.ai?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99347, Requested 1542. Please try again in 12m48.096s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What tech stack does Resume.ai use?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99346, Requested 1013. Please try again in 5m10.176s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What is PrepBuddy?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99346, Requested 1740. Please try again in 15m38.304s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What features does PrepBuddy have?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99345, Requested 1722. Please try again in 15m21.888s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What programming languages does Vanshika know?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99344, Requested 3249. Please try again in 37m20.352s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What AI/ML skills does Vanshika have?",
+        "response": "I don't have specific information on that. Is there anything else you'd like to know about my background or experience?",
+        "expected_keywords": [
+          "Generative AI",
+          "Prompt Engineering",
+          "CNN",
+          "Deep Learning"
+        ],
+        "verdict": "GROUNDED",
+        "judge_output": "VERDICT: NO\nREASON: The response does not contain any made-up facts, invented projects, fake technologies, or information that contradicts the known facts, and it also does not include any of the expected keywords, instead, it states a lack of specific information."
+      },
+      {
+        "question": "What frameworks does Vanshika use?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99915, Requested 3199. Please try again in 44m50.496s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What databases does Vanshika work with?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99914, Requested 3180. Please try again in 44m33.216s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      },
+      {
+        "question": "What extracurricular activities is Vanshika involved in?",
+        "response": "[ERROR: [ERROR] Groq API error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kqsqzh1bewm9646qwm64qtfw` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99913, Requested 3253. Please try again in 45m35.424s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}]",
+        "verdict": "SKIPPED",
+        "reason": "API error"
+      }
+    ]
+  },
+  "retrieval": {
+    "avg_precision": 0.91,
+    "avg_recall": 0.72,
+    "f1_score": 0.8039,
+    "total_questions": 25,
+    "details": [
+      {
+        "question": "What university did Vanshika attend?",
+        "expected_keywords": [
+          "Bennett University"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 1,
+        "keywords_total": 1,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What degree is Vanshika pursuing?",
+        "expected_keywords": [
+          "Bachelor of technology",
+          "Computer Science"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What is Vanshika's CGPA?",
+        "expected_keywords": [
+          "8.1"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 1,
+        "keywords_total": 1,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "When does Vanshika graduate?",
+        "expected_keywords": [
+          "2026"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 1,
+        "keywords_total": 1,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What is Vanshika's research paper about?",
+        "expected_keywords": [
+          "Diabetic Retinopathy",
+          "CNN",
+          "VGG16",
+          "Vision Transformers"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 4,
+        "keywords_total": 4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "Where was Vanshika's research paper accepted?",
+        "expected_keywords": [
+          "IJCA",
+          "International Journal of Computer Applications"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What open-source program did Vanshika contribute to?",
+        "expected_keywords": [
+          "GirlScript Summer of Code",
+          "GSSOC"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What rank did Vanshika achieve in GSSOC?",
+        "expected_keywords": [
+          "65"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 1,
+        "keywords_total": 1,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What payment integration did Vanshika implement?",
+        "expected_keywords": [
+          "Razorpay"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 1,
+        "keywords_total": 1,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What tech stack does DwellDuo use?",
+        "expected_keywords": [
+          "Java",
+          "Spring Boot",
+          "MySQL",
+          "React"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 4,
+        "keywords_total": 4,
+        "precision": 1.0,
+        "recall": 0.0,
+        "chunks_returned": 5,
+        "source_match": false
+      },
+      {
+        "question": "What is DwellDuo?",
+        "expected_keywords": [
+          "roommate matching",
+          "platform"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 1,
+        "keywords_total": 2,
+        "precision": 0.5,
+        "recall": 0.0,
+        "chunks_returned": 5,
+        "source_match": false
+      },
+      {
+        "question": "What authentication method does DwellDuo use?",
+        "expected_keywords": [
+          "JWT"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 0,
+        "keywords_total": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "chunks_returned": 5,
+        "source_match": false
+      },
+      {
+        "question": "Does DwellDuo support real-time features?",
+        "expected_keywords": [
+          "WebSocket",
+          "real-time chat"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 0.0,
+        "chunks_returned": 5,
+        "source_match": false
+      },
+      {
+        "question": "What is CodeMates?",
+        "expected_keywords": [
+          "developer",
+          "collaboration"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 1,
+        "keywords_total": 2,
+        "precision": 0.5,
+        "recall": 0.0,
+        "chunks_returned": 5,
+        "source_match": false
+      },
+      {
+        "question": "What tech stack does CodeMates use?",
+        "expected_keywords": [
+          "JavaScript",
+          "Express",
+          "React",
+          "MongoDB",
+          "Redux"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 5,
+        "keywords_total": 5,
+        "precision": 1.0,
+        "recall": 0.0,
+        "chunks_returned": 5,
+        "source_match": false
+      },
+      {
+        "question": "What real-time technology does CodeMates use?",
+        "expected_keywords": [
+          "Socket.io",
+          "WebSocket"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 0.0,
+        "chunks_returned": 5,
+        "source_match": false
+      },
+      {
+        "question": "What is Resume.ai?",
+        "expected_keywords": [
+          "AI hiring",
+          "platform"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What tech stack does Resume.ai use?",
+        "expected_keywords": [
+          "NextJS",
+          "Python",
+          "FastAPI",
+          "PostgreSQL"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 3,
+        "keywords_total": 4,
+        "precision": 0.75,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What is PrepBuddy?",
+        "expected_keywords": [
+          "placement preparation",
+          "aptitude"
+        ],
+        "expected_source": "github",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What features does PrepBuddy have?",
+        "expected_keywords": [
+          "ranking",
+          "leaderboard",
+          "badges"
+        ],
+        "expected_source": "github",
+        "keywords_found": 3,
+        "keywords_total": 3,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What programming languages does Vanshika know?",
+        "expected_keywords": [
+          "Python",
+          "Java",
+          "JavaScript",
+          "SQL"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 4,
+        "keywords_total": 4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What AI/ML skills does Vanshika have?",
+        "expected_keywords": [
+          "Generative AI",
+          "Prompt Engineering",
+          "CNN",
+          "Deep Learning"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 4,
+        "keywords_total": 4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What frameworks does Vanshika use?",
+        "expected_keywords": [
+          "React",
+          "NodeJS",
+          "ExpressJS"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 3,
+        "keywords_total": 3,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What databases does Vanshika work with?",
+        "expected_keywords": [
+          "MongoDB",
+          "MySQL"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      },
+      {
+        "question": "What extracurricular activities is Vanshika involved in?",
+        "expected_keywords": [
+          "Enactus",
+          "Nirvi"
+        ],
+        "expected_source": "resume",
+        "keywords_found": 2,
+        "keywords_total": 2,
+        "precision": 1.0,
+        "recall": 1.0,
+        "chunks_returned": 5,
+        "source_match": true
+      }
+    ]
+  },
+  "voice": {
+    "status": "skipped",
+    "reason": "VAPI_API_KEY not configured"
+  }
+}

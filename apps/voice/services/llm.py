@@ -12,7 +12,7 @@ from collections.abc import AsyncGenerator
 from dotenv import load_dotenv
 from groq import AsyncGroq
 
-from services.persona import format_prompt_with_context, get_system_prompt
+from services.persona import format_prompt_with_context, get_voice_system_prompt
 
 load_dotenv()
 
@@ -57,6 +57,7 @@ def _build_messages(
     user_message: str,
     context: str,
     conversation_history: list[dict[str, str]],
+    system_prompt: str | None = None,
 ) -> list[dict[str, str]]:
     """Build the messages list for the Groq chat API.
 
@@ -73,12 +74,14 @@ def _build_messages(
         context: RAG-retrieved context string.
         conversation_history: Prior turns as ``{"role": ..., "content": ...}``
             dicts.
+        system_prompt: Custom system prompt to override default.
 
     Returns:
         A list of message dicts ready for the Groq API.
     """
+    sys_prompt = system_prompt if system_prompt is not None else get_voice_system_prompt()
     messages: list[dict[str, str]] = [
-        {"role": "system", "content": get_system_prompt()},
+        {"role": "system", "content": sys_prompt},
     ]
 
     for turn in conversation_history:
@@ -102,6 +105,7 @@ async def chat_completion(
     user_message: str,
     context: str,
     conversation_history: list[dict[str, str]] | None = None,
+    system_prompt: str | None = None,
 ) -> str:
     """Generate a complete chat response using Groq (Llama 3.1 70B).
 
@@ -115,6 +119,7 @@ async def chat_completion(
         conversation_history: Prior conversation turns. Each dict
             has ``"role"`` (``"user"`` or ``"assistant"``) and
             ``"content"`` keys. Defaults to an empty list.
+        system_prompt: Custom system prompt to override default.
 
     Returns:
         The model's response text.
@@ -127,7 +132,7 @@ async def chat_completion(
 
     try:
         client = get_groq_client()
-        messages = _build_messages(user_message, context, conversation_history)
+        messages = _build_messages(user_message, context, conversation_history, system_prompt)
 
         response = await client.chat.completions.create(
             model=MODEL,
@@ -150,6 +155,7 @@ async def stream_chat(
     user_message: str,
     context: str,
     conversation_history: list[dict[str, str]] | None = None,
+    system_prompt: str | None = None,
 ) -> AsyncGenerator[str, None]:
     """Stream a chat response token-by-token using Groq (Llama 3.1 70B).
 
@@ -161,6 +167,7 @@ async def stream_chat(
         context: RAG-retrieved context to ground the response.
         conversation_history: Prior conversation turns. Defaults to
             an empty list.
+        system_prompt: Custom system prompt to override default.
 
     Yields:
         String chunks of the model's response as they arrive.
@@ -173,7 +180,7 @@ async def stream_chat(
 
     try:
         client = get_groq_client()
-        messages = _build_messages(user_message, context, conversation_history)
+        messages = _build_messages(user_message, context, conversation_history, system_prompt)
 
         stream = await client.chat.completions.create(
             model=MODEL,

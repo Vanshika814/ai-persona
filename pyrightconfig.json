@@ -1,0 +1,19 @@
+{
+  "executionEnvironments": [
+    {
+      "root": "packages/evals",
+      "venvPath": "packages/evals",
+      "venv": ".venv"
+    },
+    {
+      "root": "apps/voice",
+      "venvPath": "apps/voice",
+      "venv": ".venv"
+    },
+    {
+      "root": "packages/rag",
+      "venvPath": "packages/rag",
+      "venv": ".venv"
+    }
+  ]
+}

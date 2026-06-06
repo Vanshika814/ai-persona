@@ -76,6 +76,239 @@ function SendIcon() {
   );
 }
 
+interface Slot {
+  date: string;
+  time: string;
+  datetime: string;
+  display: string;
+}
+
+function SchedulerWidget() {
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [notes, setNotes] = useState("");
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingResult, setBookingResult] = useState<{
+    success: boolean;
+    meet_link?: string;
+    confirmation_message?: string;
+    error?: string;
+  } | null>(null);
+
+  // Fetch slots on mount
+  const fetchSlots = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${BACKEND_URL}/calendar/slots`);
+      if (!res.ok) throw new Error("Failed to load slots");
+      const data = await res.json();
+      setSlots(data.slots || []);
+    } catch (err) {
+      setError("Unable to retrieve available slots. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSlots();
+  }, []);
+
+  const handleBook = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!selectedSlot || !name || !email) return;
+
+    setBookingLoading(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/calendar/book`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          datetime_str: selectedSlot.datetime,
+          attendee_name: name,
+          attendee_email: email,
+          notes,
+        }),
+      });
+      const data = await res.json();
+      setBookingResult(data);
+    } catch (err) {
+      setBookingResult({
+        success: false,
+        error: "Booking failed. Please check your internet connection and try again.",
+      });
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="mt-3 p-4 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col items-center gap-3 w-full">
+        <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs text-muted">Checking availability...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mt-3 p-4 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col items-center gap-2 w-full">
+        <span className="text-xs text-error text-center">{error}</span>
+        <button
+          type="button"
+          onClick={fetchSlots}
+          className="text-xs text-accent font-semibold hover:underline"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (bookingResult?.success) {
+    return (
+      <div className="mt-3 p-5 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col items-center text-center gap-3 animate-fade-in w-full">
+        <div className="w-10 h-10 bg-success/10 text-success rounded-full flex items-center justify-center font-bold text-lg">
+          ✓
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-sm font-bold text-[#1E1B4B]">Meeting Confirmed!</h4>
+          <p className="text-xs text-muted">{bookingResult.confirmation_message}</p>
+        </div>
+        {bookingResult.meet_link && (
+          <a
+            href={bookingResult.meet_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-white text-xs font-semibold rounded-xl hover:bg-accent-hover transition-colors shadow-sm"
+          >
+            Join Google Meet
+          </a>
+        )}
+        <p className="text-[10px] text-muted">A calendar invitation & confirmation email have been sent.</p>
+      </div>
+    );
+  }
+
+  if (selectedSlot) {
+    return (
+      <div className="mt-3 p-5 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col gap-4 animate-fade-in w-full text-left">
+        <div className="flex items-center justify-between border-b border-border-light pb-2">
+          <h4 className="text-xs font-bold text-[#1E1B4B]">Enter Booking Details</h4>
+          <button
+            type="button"
+            onClick={() => setSelectedSlot(null)}
+            className="text-[11px] text-muted hover:text-foreground font-medium"
+          >
+            ← Change Time
+          </button>
+        </div>
+        <div className="space-y-1 bg-accent-soft/45 p-2.5 rounded-xl border border-accent/10">
+          <span className="text-[10px] uppercase font-bold text-accent tracking-wider block">Selected Slot</span>
+          <span className="text-xs font-semibold text-[#1e1b4b]">{selectedSlot.display}</span>
+        </div>
+        <form onSubmit={handleBook} className="space-y-3">
+          <div>
+            <label className="block text-[11px] font-semibold text-[#374151] mb-1">Name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your Name"
+              className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent bg-background text-[#1f2937]"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-[#374151] mb-1">Email</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent bg-background text-[#1f2937]"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-[#374151] mb-1">Notes (Optional)</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="What would you like to discuss?"
+              rows={2}
+              className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent bg-background resize-none text-[#1f2937]"
+            />
+          </div>
+          {bookingResult?.error && (
+            <div className="text-xs text-error font-medium">{bookingResult.error}</div>
+          )}
+          <button
+            type="submit"
+            disabled={bookingLoading}
+            className="w-full py-2.5 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-xl disabled:opacity-50 transition-colors shadow-md flex items-center justify-center gap-1.5"
+          >
+            {bookingLoading ? (
+              <>
+                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Booking...
+              </>
+            ) : (
+              "Confirm Interview"
+            )}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  // Group slots by date
+  const groupedSlots: { [key: string]: Slot[] } = {};
+  slots.forEach((slot) => {
+    const dateStr = slot.display.split(" at ")[0];
+    if (!groupedSlots[dateStr]) groupedSlots[dateStr] = [];
+    groupedSlots[dateStr].push(slot);
+  });
+
+  return (
+    <div className="mt-3 p-4 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col gap-3 animate-fade-in max-h-[300px] overflow-y-auto w-full text-left">
+      <h4 className="text-xs font-bold text-[#1E1B4B] border-b border-border-light pb-2">Select a Time Slot</h4>
+      {slots.length === 0 ? (
+        <span className="text-xs text-muted text-center py-2">No available slots found on Cal.com.</span>
+      ) : (
+        <div className="space-y-3">
+          {Object.entries(groupedSlots).map(([dateLabel, slotList]) => (
+            <div key={dateLabel} className="space-y-1.5">
+              <span className="text-[10px] uppercase font-bold text-muted tracking-wider block">{dateLabel}</span>
+              <div className="grid grid-cols-2 gap-1.5">
+                {slotList.map((slot) => {
+                  const timeLabel = slot.display.split(" at ")[1]?.replace(" IST", "") || slot.time;
+                  return (
+                    <button
+                      key={slot.datetime}
+                      type="button"
+                      onClick={() => setSelectedSlot(slot)}
+                      className="px-2.5 py-1.5 text-xs font-medium text-accent bg-accent-soft rounded-lg hover:bg-accent hover:text-white transition-all text-center select-none active:scale-[0.98]"
+                    >
+                      {timeLabel}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ──────────────────────────────────────────────
    Main chat page
    ────────────────────────────────────────────── */
@@ -266,28 +499,41 @@ export default function ChatPage() {
           ref={scrollRef}
           className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-white/40"
         >
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex animate-fade-in ${
-                msg.role === "user" ? "justify-end" : "items-end gap-3"
-              }`}
-            >
-              {/* AI avatar */}
-              {msg.role === "assistant" && <AiAvatar />}
+          {messages.map((msg) => {
+            const hasWidget = msg.role === "assistant" && msg.content.includes("[SCHEDULER_WIDGET]");
+            const cleanContent = hasWidget
+              ? msg.content.replace("[SCHEDULER_WIDGET]", "").trim()
+              : msg.content;
 
-              {/* Bubble */}
+            return (
               <div
-                className={`max-w-[80%] sm:max-w-[70%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap break-words shadow-sm ${
-                  msg.role === "user"
-                    ? "bg-user-bubble text-user-bubble-text rounded-2xl rounded-br-none"
-                    : "bg-ai-bubble text-ai-bubble-text rounded-2xl rounded-bl-none border border-border-light"
+                key={msg.id}
+                className={`flex animate-fade-in ${
+                  msg.role === "user" ? "justify-end" : "items-end gap-3"
                 }`}
               >
-                {msg.content}
+                {/* AI avatar */}
+                {msg.role === "assistant" && <AiAvatar />}
+
+                {/* Bubble container to hold text bubble and/or widget */}
+                <div className="flex flex-col max-w-[80%] sm:max-w-[70%]">
+                  {cleanContent && (
+                    <div
+                      className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap break-words shadow-sm ${
+                        msg.role === "user"
+                          ? "bg-user-bubble text-user-bubble-text rounded-2xl rounded-br-none"
+                          : "bg-ai-bubble text-ai-bubble-text rounded-2xl rounded-bl-none border border-border-light"
+                      }`}
+                    >
+                      {cleanContent}
+                    </div>
+                  )}
+
+                  {hasWidget && <SchedulerWidget />}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* Typing indicator */}
           {isStreaming &&

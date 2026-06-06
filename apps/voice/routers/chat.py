@@ -16,6 +16,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from services import llm, rag
+from services.persona import get_chat_system_prompt
 
 logger = logging.getLogger("voice.chat")
 
@@ -43,6 +44,7 @@ async def _sse_stream(
     message: str,
     context: str,
     conversation_history: list[dict[str, str]],
+    system_prompt: str | None = None,
 ):
     """Yield SSE-formatted chunks from the LLM stream.
 
@@ -62,6 +64,7 @@ async def _sse_stream(
             user_message=message,
             context=context,
             conversation_history=conversation_history,
+            system_prompt=system_prompt,
         ):
             yield f"data: {chunk}\n\n"
 
@@ -112,15 +115,44 @@ async def chat(request: Request, body: ChatRequest) -> StreamingResponse:
 
         # 3. Enrich context for calendar requests
         if calendar_intent:
-            context = (
-                f"{context}\n\n"
-                "User is asking about scheduling. "
-                "Check availability and propose slots."
-            )
+            from services import calendar as cal_service
+            from datetime import date
+            try:
+                slots = await cal_service.get_available_slots(date=date.today().isoformat())
+                if slots:
+                    slots_str = "\n".join([f"- {s['display']} (ISO start: {s['datetime']})" for s in slots[:5]])
+                    context = (
+                        f"{context}\n\n"
+                        f"Available interview slots:\n{slots_str}\n\n"
+                        "User is asking about scheduling. Propose these exact available slots. "
+                        "Tell them they can choose one of these slots or type a slot directly to book it. "
+                        "When they select a slot, explain that they can confirm by giving their Name, Email, and the chosen Slot. "
+                        "Always end your message with the exact token [SCHEDULER_WIDGET] so the interactive calendar widget is rendered."
+                    )
+                else:
+                    context = (
+                        f"{context}\n\n"
+                        "User is asking about scheduling, but no available slots were found on the calendar. "
+                        "Please ask them to check back later or suggest another time. "
+                        "Always end your message with the exact token [SCHEDULER_WIDGET] so they can see the calendar widget and retry."
+                    )
+            except Exception as e:
+                logger.error("Failed to get available slots: %s", e)
+                context = (
+                    f"{context}\n\n"
+                    "User is asking about scheduling, but there was an error retrieving available slots. "
+                    "Ask them to retry. "
+                    "Always end your message with the exact token [SCHEDULER_WIDGET] so they can retry using the widget."
+                )
 
         # 4. Stream response
         return StreamingResponse(
-            _sse_stream(body.message, context, body.conversation_history),
+            _sse_stream(
+                body.message,
+                context,
+                body.conversation_history,
+                system_prompt=get_chat_system_prompt(),
+            ),
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
