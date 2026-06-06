@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0c0c0f;
-  --foreground: #e4e4e7;
-  --surface: #18181b;
-  --surface-hover: #1f1f23;
-  --border: #27272a;
-  --border-light: #3f3f46;
-  --accent: #8b5cf6;
-  --accent-hover: #7c3aed;
-  --accent-soft: rgba(139, 92, 246, 0.12);
-  --user-bubble: #7c3aed;
+  --background: #FCF8F2; /* Cozy warm cream background */
+  --foreground: #1E1B4B; /* Deep indigo for main headings */
+  --surface: #EBE8E2;    /* Warm grey/silver for the chat box outer wrapper */
+  --surface-hover: #E3DFD7;
+  --border: #D1CBC0;     /* Soft border */
+  --border-light: #E5E1D8;
+  --accent: #4F46E5;     /* Indigo/violet accent */
+  --accent-hover: #4338CA;
+  --accent-soft: rgba(79, 70, 229, 0.1);
+  --user-bubble: #4F46E5;
   --user-bubble-text: #ffffff;
-  --ai-bubble: #1e1e24;
-  --ai-bubble-text: #d4d4d8;
-  --muted: #71717a;
+  --ai-bubble: #ffffff;
+  --ai-bubble-text: #1f2937; /* Clean charcoal dark grey text */
+  --muted: #6b7280;
   --error: #ef4444;
-  --success: #22c55e;
+  --success: #10b981;
 }
 
 @theme inline {

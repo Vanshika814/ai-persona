@@ -228,28 +228,44 @@ export default function ChatPage() {
      ────────────────────────────────────────────── */
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      {/* ── Header ── */}
-      <header className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-border bg-surface/60 backdrop-blur-md">
-        <AiAvatar />
-        <div>
-          <h1 className="text-base font-semibold text-foreground leading-tight">
-            Vanshika Agarwal
-          </h1>
-          <p className="text-xs text-muted">AI Persona · Online</p>
-        </div>
-        <div className="ml-auto flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
-          <span className="text-xs text-muted hidden sm:inline">Connected</span>
-        </div>
-      </header>
+    <div className="min-h-screen w-full bg-background py-12 px-4 sm:px-6 md:px-8 overflow-y-auto flex flex-col justify-start items-center">
+      {/* ── Top Badge / Capsule ── */}
+      <div className="inline-flex items-center justify-center bg-[#E5E7EB] border border-border px-5 py-1.5 rounded-full text-sm font-semibold text-[#374151] mb-6 shadow-sm select-none">
+        Hi, I'm Vanshika
+      </div>
 
-      {/* ── Messages ── */}
-      <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-5"
-      >
-        <div className="max-w-2xl mx-auto space-y-5">
+      {/* ── Main Heading ── */}
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#1E1B4B] text-center mb-4 tracking-tight leading-tight">
+        Meet ME, Through AI
+      </h1>
+
+      {/* ── Description ── */}
+      <p className="text-center text-[#4B5563] max-w-xl text-base sm:text-lg mb-10 leading-relaxed">
+        Ask my AI anything about my projects, skills, experience, and how I solve problems.
+      </p>
+
+      {/* ── Chat Box Container (Grey Box) ── */}
+      <div className="w-full max-w-3xl rounded-3xl bg-surface border border-border shadow-xl overflow-hidden flex flex-col h-[580px] transition-all">
+        {/* ── Header inside Chat Box ── */}
+        <header className="flex items-center gap-3 px-6 py-4 border-b border-border bg-surface/50 backdrop-blur-sm flex-shrink-0">
+          <AiAvatar />
+          <div>
+            <h2 className="text-sm font-bold text-[#1E1B4B] leading-tight">
+              Vanshika Agarwal
+            </h2>
+            <p className="text-[11px] text-muted">AI Persona · Online</p>
+          </div>
+          <div className="ml-auto flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+            <span className="text-xs text-muted">Connected</span>
+          </div>
+        </header>
+
+        {/* ── Scrollable Messages Area ── */}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-white/40"
+        >
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -262,10 +278,10 @@ export default function ChatPage() {
 
               {/* Bubble */}
               <div
-                className={`max-w-[80%] sm:max-w-[70%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap break-words ${
+                className={`max-w-[80%] sm:max-w-[70%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap break-words shadow-sm ${
                   msg.role === "user"
-                    ? "bg-user-bubble text-user-bubble-text rounded-2xl rounded-br-md"
-                    : "bg-ai-bubble text-ai-bubble-text rounded-2xl rounded-bl-md"
+                    ? "bg-user-bubble text-user-bubble-text rounded-2xl rounded-br-none"
+                    : "bg-ai-bubble text-ai-bubble-text rounded-2xl rounded-bl-none border border-border-light"
                 }`}
               >
                 {msg.content}
@@ -288,37 +304,37 @@ export default function ChatPage() {
             </div>
           )}
         </div>
-      </div>
 
-      {/* ── Input bar ── */}
-      <div className="border-t border-border bg-surface/60 backdrop-blur-md px-4 sm:px-6 py-3">
-        <form
-          onSubmit={onSubmit}
-          className="max-w-2xl mx-auto flex items-end gap-3"
-        >
-          <textarea
-            ref={inputRef}
-            id="chat-input"
-            value={input}
-            onChange={(e) => onInputChange(e.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder="Ask about Vanshika's experience…"
-            disabled={isStreaming}
-            rows={1}
-            className="flex-1 resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent disabled:opacity-50 transition-all"
-          />
-          <button
-            type="submit"
-            disabled={isStreaming || !input.trim()}
-            id="send-button"
-            className="flex items-center justify-center w-11 h-11 rounded-xl bg-accent text-white hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+        {/* ── Input Bar inside Chat Box ── */}
+        <div className="border-t border-border bg-surface/50 backdrop-blur-sm px-6 py-4 flex-shrink-0">
+          <form
+            onSubmit={onSubmit}
+            className="flex items-end gap-3"
           >
-            <SendIcon />
-          </button>
-        </form>
-        <p className="text-center text-[11px] text-muted mt-2">
-          AI-powered · Answers from Vanshika&apos;s resume &amp; GitHub
-        </p>
+            <textarea
+              ref={inputRef}
+              id="chat-input"
+              value={input}
+              onChange={(e) => onInputChange(e.target.value)}
+              onKeyDown={onKeyDown}
+              placeholder="Ask about Vanshika's experience…"
+              disabled={isStreaming}
+              rows={1}
+              className="flex-1 resize-none rounded-xl border border-border bg-white px-4 py-3 text-sm text-[#1f2937] placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent disabled:opacity-50 transition-all shadow-sm"
+            />
+            <button
+              type="submit"
+              disabled={isStreaming || !input.trim()}
+              id="send-button"
+              className="flex items-center justify-center w-11 h-11 rounded-xl bg-accent text-white hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 shadow-md"
+            >
+              <SendIcon />
+            </button>
+          </form>
+          <p className="text-center text-[10px] text-muted mt-2 tracking-wide uppercase font-semibold">
+            AI-powered · Answers from Vanshika&apos;s resume &amp; GitHub
+          </p>
+        </div>
       </div>
     </div>
   );
