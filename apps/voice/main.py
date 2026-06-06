@@ -5,15 +5,16 @@ from __future__ import annotations
 import logging
 import os
 
-import uvicorn
 from dotenv import load_dotenv
+
+load_dotenv()
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from routers.chat import router as chat_router
 from routers.calendar import router as calendar_router
-
-load_dotenv()
 
 # ──────────────────────────────────────────────
 #  Logging
@@ -23,6 +24,8 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
 )
+
+logger = logging.getLogger("voice")
 
 # ──────────────────────────────────────────────
 #  App
@@ -71,9 +74,5 @@ async def vapi_tool_call() -> dict[str, str]:
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "8000"))
-    uvicorn.run(
-    "main:app",
-    host="0.0.0.0",
-    port=int(os.environ.get("PORT", 8000))
-)
-
+    logger.info("Starting server on port %d", port)
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
