@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, type FormEvent, type KeyboardEvent } from "react";
+import ReactMarkdown from "react-markdown";
 
 /* ──────────────────────────────────────────────
    Types
@@ -525,7 +526,20 @@ export default function ChatPage() {
                           : "bg-ai-bubble text-ai-bubble-text rounded-2xl rounded-bl-none border border-border-light"
                       }`}
                     >
-                      {cleanContent}
+                      {msg.role === "assistant" ? (
+                        <ReactMarkdown
+                          components={{
+                            p: ({children}) => <p style={{margin: '0 0 6px 0'}}>{children}</p>,
+                            ul: ({children}) => <ul style={{margin: '4px 0', paddingLeft: '16px'}}>{children}</ul>,
+                            li: ({children}) => <li style={{marginBottom: '2px'}}>{children}</li>,
+                            strong: ({children}) => <strong style={{fontWeight: 500}}>{children}</strong>,
+                          }}
+                        >
+                          {cleanContent}
+                        </ReactMarkdown>
+                      ) : (
+                        cleanContent
+                      )}
                     </div>
                   )}
 
