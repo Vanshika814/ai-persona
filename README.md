@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 Vanshika AI Persona Project
+The Vanshika AI Persona project is a comprehensive application that utilizes natural language processing (NLP) and machine learning (ML) to create a conversational AI persona. The project consists of multiple components, including a retrieval-augmented generator (RAG) pipeline, a FastAPI backend, and various services for handling tasks such as query embedding, semantic retrieval, and calendar integration. The primary goal of the project is to provide a conversational AI interface that can engage in meaningful discussions and respond to user queries in a contextually relevant manner.
 
-## Getting Started
+## 🚀 Features
+- **RAG Pipeline**: A retrieval-augmented generator pipeline that enables the AI persona to retrieve and generate contextually relevant responses to user queries.
+- **FastAPI Backend**: A FastAPI application that provides a RESTful API for interacting with the AI persona and handling tasks such as chat, calendar, and VAPI functionality.
+- **Query Embedding**: A service that utilizes Google Gemini for embedding queries and performing cosine-similarity search via Supabase.
+- **Semantic Retrieval**: A service that retrieves relevant context chunks for a given query using RAG.
+- **Calendar Integration**: A service that integrates with the Cal.com API v2 for fetching available time slots, booking time slots, and fetching booking details.
+- **Chat Interface**: A streaming response for chat messages with RAG-augmented context.
 
-First, run the development server:
+## 🛠️ Tech Stack
+- **Frontend**: Nextjs, React
+- **Backend**: FastAPI
+- **Database**: Supabase
+- **AI Tools**: Google Gemini, Groq (Llama 3.1 70B)
+- **Build Tools**: Docker Compose
+- **Libraries**: `genai`, `supabase`, `httpx`, `pydantic`, `dotenv`, `os`, `asyncio`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📦 Installation
+To install the project, follow these steps:
+1. Clone the repository: `git clone https://github.com/your-repo/vanshika-ai-persona.git`
+2. Install the required dependencies: `pip install -r requirements.txt`
+3. Set up the environment variables: `cp .env.example .env` and modify the `.env` file to include your API keys and other configuration settings.
+4. Run the application: `uvicorn main:app --host 0.0.0.0 --port 8000`
+
+## 💻 Usage
+To use the application, follow these steps:
+1. Start the application: `uvicorn main:app --host 0.0.0.0 --port 8000`
+2. Open a web browser and navigate to `http://localhost:8000`
+3. Interact with the AI persona using the chat interface.
+
+## 📂 Project Structure
+```markdown
+.
+├── apps
+│   ├── voice
+│   │   ├── main.py
+│   │   ├── routers
+│   │   │   ├── vapi.py
+│   │   │   ├── chat.py
+│   │   │   ├── calendar.py
+│   │   ├── services
+│   │   │   ├── rag.py
+│   │   │   ├── persona.py
+│   │   │   ├── llm.py
+│   │   │   ├── calendar.py
+├── packages
+│   ├── rag
+│   │   ├── main.py
+│   │   ├── loader.py
+│   │   ├── parser.py
+│   │   ├── retriever.py
+│   │   ├── indexer.py
+│   │   ├── embedder.py
+├── docker-compose.yml
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📸 Screenshots
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🤝 Contributing
+To contribute to the project, please follow these steps:
+1. Fork the repository: `git fork https://github.com/your-repo/vanshika-ai-persona.git`
+2. Create a new branch: `git branch feature/your-feature`
+3. Make your changes and commit them: `git commit -m "Your commit message"`
+4. Push your changes to the remote repository: `git push origin feature/your-feature`
+5. Create a pull request: `git pull-request`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 License
+The project is licensed under the MIT License.
 
-## Learn More
+## 📬 Contact
+For any questions or concerns, please contact us at [your-email@example.com](mailto:vanshikaagarwal781@gmail.com).
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 💖 Thanks Message
+This project was made possible by the contributions of many individuals. We would like to extend our gratitude to everyone who has contributed to the project.
