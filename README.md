@@ -71,7 +71,7 @@ To contribute to the project, please follow these steps:
 The project is licensed under the MIT License.
 
 ## 📬 Contact
-For any questions or concerns, please contact us at [your-email@example.com](mailto:vanshikaagarwal781@gmail.com).
+For any questions or concerns, please contact us at [vanshikaagarwal781@gmail.com](mailto:vanshikaagarwal781@gmail.com).
 
 ## 💖 Thanks Message
 This project was made possible by the contributions of many individuals. We would like to extend our gratitude to everyone who has contributed to the project.
