@@ -8,6 +8,8 @@ The Vanshika AI Persona project is a comprehensive application that utilizes nat
 - **Semantic Retrieval**: A service that retrieves relevant context chunks for a given query using RAG.
 - **Calendar Integration**: A service that integrates with the Cal.com API v2 for fetching available time slots, booking time slots, and fetching booking details.
 - **Chat Interface**: A streaming response for chat messages with RAG-augmented context.
+- **Note:** **Outbound calling** is fully integrated through Vapi. During testing, the free Vapi phone number could successfully authenticate and initiate outbound call requests. However, Vapi's free phone numbers do not support international calling, so calls to Indian numbers require either a paid Vapi number or an imported Twilio number. **The integration is complete and can be verified using supported US phone numbers.**
+
 
 ## 🛠️ Tech Stack
 - **Frontend**: Nextjs, React
