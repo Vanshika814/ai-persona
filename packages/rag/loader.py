@@ -1,12 +1,3 @@
-"""
-loader.py – RAG pipeline data loader.
-
-Provides helpers for:
-  • Extracting text from a local PDF résumé (pypdf).
-  • Fetching rich GitHub profile data (httpx, async).
-  • Detecting repo changes via commit-SHA hashing.
-"""
-
 from __future__ import annotations
 
 import base64
@@ -21,10 +12,6 @@ from pypdf import PdfReader
 
 load_dotenv()
 
-# ──────────────────────────────────────────────
-#  Constants
-# ──────────────────────────────────────────────
-
 GITHUB_API = "https://api.github.com"
 
 MAX_TREE_DEPTH = 2
@@ -32,25 +19,8 @@ MAX_TREE_DEPTH = 2
 SHA_STORE_DIR = Path(__file__).resolve().parents[3] / "data" / "github-dump"
 SHA_STORE_PATH = SHA_STORE_DIR / ".repo_shas.json"
 
-
-# ──────────────────────────────────────────────
-#  1. Local résumé loading
-# ──────────────────────────────────────────────
-
-
 def load_resume_pdf(path: str) -> str:
-    """Extract and return all text from a PDF file.
-
-    Args:
-        path: Filesystem path to the PDF résumé.
-
-    Returns:
-        The concatenated text of every page in the PDF.
-
-    Raises:
-        FileNotFoundError: If *path* does not exist.
-        ValueError: If the file cannot be read as a valid PDF.
-    """
+    
     file_path = Path(path)
 
     if not file_path.exists():
@@ -68,12 +38,6 @@ def load_resume_pdf(path: str) -> str:
             pages_text.append(text.strip())
 
     return "\n\n".join(pages_text)
-
-
-# ──────────────────────────────────────────────
-#  2. GitHub loading (async)
-# ──────────────────────────────────────────────
-
 
 def _auth_headers(token: str) -> dict[str, str]:
     """Return common headers for authenticated GitHub API requests."""
@@ -186,22 +150,7 @@ async def fetch_github_repos(
     token: str,
     max_commits: int = 100,
 ) -> list[dict[str, Any]]:
-    """Fetch all public repos for *username* with rich metadata.
     
-    For every repo the following data is collected:
-      - **metadata** - name, description, language, stargazers count
-      - **readme** - decoded README content (or empty string)
-      - **file_tree** - recursive listing limited to depth 2
-      - **commits** - all commits up to *max_commits*
-      - **languages** - bytes-per-language breakdown
-
-    Args:
-        username: GitHub username whose public repos to fetch.
-        token: GitHub personal access token (for 5 000 req/hr limit).
-
-    Returns:
-        A list of dicts, one per repository.
-    """
     headers = _auth_headers(token)
     repos_out: list[dict[str, Any]] = []
 
@@ -263,24 +212,8 @@ async def fetch_github_repos(
 
     return repos_out
 
-
-# ──────────────────────────────────────────────
-#  3. Commit-SHA change detection
-# ──────────────────────────────────────────────
-
-
 async def get_commit_sha(username: str, repo: str, token: str) -> str:
-    """Fetch the latest commit SHA for *repo* owned by *username*.
-
-    Args:
-        username: GitHub repository owner.
-        repo: Repository name.
-        token: GitHub personal access token.
-
-    Returns:
-        The full SHA string of the most recent commit, or an empty string
-        if the repo has no commits.
-    """
+    
     headers = _auth_headers(token)
 
     async with httpx.AsyncClient(timeout=15.0) as client:
@@ -292,12 +225,6 @@ async def get_commit_sha(username: str, repo: str, token: str) -> str:
 
 
 def load_stored_shas() -> dict[str, str]:
-    """Load previously stored commit SHAs from disk.
-
-    Returns:
-        A dict mapping ``"owner/repo"`` → SHA string.
-        Returns an empty dict if the file does not exist.
-    """
     if not SHA_STORE_PATH.exists():
         return {}
 
@@ -308,11 +235,6 @@ def load_stored_shas() -> dict[str, str]:
 
 
 def save_shas(shas: dict[str, str]) -> None:
-    """Persist commit SHAs to disk.
-
-    Args:
-        shas: Mapping of ``"owner/repo"`` → SHA string.
-    """
     SHA_STORE_DIR.mkdir(parents=True, exist_ok=True)
     SHA_STORE_PATH.write_text(
         json.dumps(shas, indent=2) + "\n",
@@ -321,19 +243,6 @@ def save_shas(shas: dict[str, str]) -> None:
 
 
 async def has_repo_changed(username: str, repo: str, token: str) -> bool:
-    """Check whether a repo has new commits since the last recorded SHA.
-
-    Compares the current HEAD SHA with the value stored in
-    ``data/github-dump/.repo_shas.json``.
-
-    Args:
-        username: GitHub repository owner.
-        repo: Repository name.
-        token: GitHub personal access token.
-
-    Returns:
-        ``True`` if the repo is new or has changed; ``False`` otherwise.
-    """
     current_sha = await get_commit_sha(username, repo, token)
 
     if not current_sha:

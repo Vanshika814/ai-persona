@@ -1,20 +1,7 @@
-"""
-parser.py – RAG pipeline data parser.
-
-Provides helpers for:
-  • Extracting structured sections from raw résumé text.
-  • Cleaning and normalising GitHub repo dicts for downstream chunking.
-"""
-
 from __future__ import annotations
 
 import re
 from typing import Any
-
-
-# ──────────────────────────────────────────────
-#  Constants
-# ──────────────────────────────────────────────
 
 # Section header patterns (case-insensitive).
 # Each key maps to a list of alternative header labels that may appear in a résumé.
@@ -83,28 +70,8 @@ _TECH_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     (tech, re.compile(re.escape(tech), re.IGNORECASE)) for tech in _KNOWN_TECHNOLOGIES
 ]
 
-
-# ──────────────────────────────────────────────
-#  1. Résumé parsing
-# ──────────────────────────────────────────────
-
-
 def parse_resume(text: str) -> dict[str, Any]:
-    """Parse raw résumé text into structured sections.
-
-    Uses simple regex header detection to split the document into known
-    sections (education, experience, projects, skills, summary).
-
-    Args:
-        text: Raw text extracted from a PDF résumé.
-
-    Returns:
-        A dict with two keys:
-
-        - ``"raw"`` – the original full text.
-        - ``"sections"`` – a dict mapping each section name to its extracted
-          text (empty string if the section was not found).
-    """
+    
     sections: dict[str, str] = {key: "" for key in _SECTION_ALIASES}
 
     # Collect every (section_name, start_index, header_end_index) match.
@@ -132,22 +99,8 @@ def parse_resume(text: str) -> dict[str, Any]:
         "sections": sections,
     }
 
-
-# ──────────────────────────────────────────────
-#  2. GitHub repo parsing
-# ──────────────────────────────────────────────
-
-
 def _detect_tech_stack(readme: str, languages: str) -> list[str]:
-    """Scan *readme* and *languages* for known technologies.
-
-    Args:
-        readme: Full README text.
-        languages: Comma-separated language names.
-
-    Returns:
-        De-duplicated list of matched technology names (original casing).
-    """
+    
     combined = f"{readme}\n{languages}"
     found: list[str] = []
     for tech, pattern in _TECH_PATTERNS:
@@ -157,22 +110,7 @@ def _detect_tech_stack(readme: str, languages: str) -> list[str]:
 
 
 def parse_repo(repo: dict[str, Any]) -> dict[str, Any]:
-    """Clean and normalise a raw repo dict from :func:`loader.fetch_github_repos`.
-
-    Args:
-        repo: A single repository dict as returned by the loader.
-
-    Returns:
-        A cleaned dict containing:
-
-        - ``name``, ``description``, ``stars`` – basic metadata.
-        - ``languages`` – comma-separated language names (bytes stripped).
-        - ``readme_summary`` – first 500 characters of the README.
-        - ``readme_full`` – full README text.
-        - ``file_tree`` – flat list of file-path strings.
-        - ``commits`` – list of commit-message strings.
-        - ``tech_stack`` – detected technologies.
-    """
+    
     readme: str = repo.get("readme") or ""
     languages_dict: dict[str, int] = repo.get("languages") or {}
     languages_str = ", ".join(languages_dict.keys())
@@ -206,12 +144,4 @@ def parse_repo(repo: dict[str, Any]) -> dict[str, Any]:
 
 
 def parse_all_repos(repos: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Apply :func:`parse_repo` to every repo in *repos*.
-
-    Args:
-        repos: List of raw repo dicts from the loader.
-
-    Returns:
-        List of cleaned repo dicts.
-    """
     return [parse_repo(repo) for repo in repos]

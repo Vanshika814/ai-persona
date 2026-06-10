@@ -1,13 +1,3 @@
-"""
-cal_client.py – Integration with Cal.com API v2.
-
-Provides helpers for:
-  • Fetching available time slots.
-  • Booking time slots.
-  • Fetching booking details.
-  • Authenticating and configuring headers.
-"""
-
 from __future__ import annotations
 
 import os
@@ -24,16 +14,7 @@ BASE_URL = "https://api.cal.com/v2"
 
 
 def get_cal_headers() -> dict[str, str]:
-    """Return the headers required for the Cal.com API v2.
-
-    Reads `CALCOM_API_KEY` from the environment.
-
-    Returns:
-        A dict of headers including cal-api-version and Authorization.
-
-    Raises:
-        ValueError: If `CALCOM_API_KEY` is not set.
-    """
+    
     api_key = os.getenv("CALCOM_API_KEY")
     if not api_key:
         raise ValueError("CALCOM_API_KEY is not set in the environment.")
@@ -45,21 +26,7 @@ def get_cal_headers() -> dict[str, str]:
 
 
 async def get_available_slots(date: str, days_ahead: int = 5) -> list[dict[str, Any]]:
-    """Fetch available slots from Cal.com API v2 for the given date range.
-
-    Args:
-        date: The start date in "YYYY-MM-DD" format.
-        days_ahead: The number of days ahead to search.
-
-    Returns:
-        A list of slot dicts:
-        {
-            "date": "2026-06-10",
-            "time": "10:00",
-            "datetime": "2026-06-10T10:00:00+05:30",
-            "display": "June 10, Tuesday at 10:00 AM IST"
-        }
-    """
+    
     event_type_id = os.getenv("CALCOM_EVENT_TYPE_ID")
     if not event_type_id:
         raise ValueError("CALCOM_EVENT_TYPE_ID is not set in the environment.")
@@ -162,17 +129,7 @@ async def book_slot(
     attendee_email: str,
     notes: str = "",
 ) -> dict[str, Any]:
-    """Book a time slot on Cal.com.
-
-    Args:
-        datetime_str: The start time in ISO 8601 format (e.g. "2026-06-10T10:00:00+05:30").
-        attendee_name: Name of the attendee.
-        attendee_email: Email of the attendee.
-        notes: Optional booking notes.
-
-    Returns:
-        A booking confirmation dict.
-    """
+    
     event_type_id = os.getenv("CALCOM_EVENT_TYPE_ID")
     if not event_type_id:
         return {"success": False, "error": "CALCOM_EVENT_TYPE_ID is not set."}
@@ -200,14 +157,33 @@ async def book_slot(
     headers = get_cal_headers()
     url = f"{BASE_URL}/bookings"
 
-    async with httpx.AsyncClient() as client:
+    print("=" * 80)
+    print("BOOKING REQUEST")
+    print("slot_id:", datetime_str)
+    print("name:", attendee_name)
+    print("email:", attendee_email)
+    print("=" * 80)
+
+    timeout = httpx.Timeout(30.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         try:
+            print("URL:", url)
+            print("PAYLOAD:", payload)
+            print("HEADERS:", headers)
             response = await client.post(url, headers=headers, json=payload)
+            print("=" * 80)
+            print("CAL RESPONSE")
+            print(response.status_code)
+            print(response.text)
+            print("=" * 80)
             response_json = response.json()
             if not response.is_success:
                 error_msg = response_json.get("error", {}).get("message") or response.text
                 return {"success": False, "error": error_msg}
         except Exception as e:
+            print("EXCEPTION IN BOOK_SLOT:", e)
+            import traceback
+            traceback.print_exc()
             return {"success": False, "error": f"API request failed: {e}"}
 
     # Extract details from response
@@ -243,14 +219,7 @@ async def book_slot(
 
 
 async def get_booking(booking_id: str) -> dict[str, Any]:
-    """Retrieve details for a specific booking from Cal.com.
-
-    Args:
-        booking_id: The unique booking identifier.
-
-    Returns:
-        A dictionary containing the booking details.
-    """
+    
     headers = get_cal_headers()
     url = f"{BASE_URL}/bookings/{booking_id}"
 

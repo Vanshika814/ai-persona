@@ -1,12 +1,3 @@
-"""
-main.py – RAG pipeline orchestrator.
-
-Ties together every stage of the pipeline:
-  • **Indexing** – load → parse → chunk → embed → upsert.
-  • **Querying** – embed query → retrieve → format context.
-
-Can be invoked from the CLI with ``index`` or ``query`` subcommands.
-"""
 
 from __future__ import annotations
 
@@ -29,27 +20,7 @@ except (ImportError, ValueError):
 
 load_dotenv()
 
-
-# ──────────────────────────────────────────────
-#  1. Index pipeline
-# ──────────────────────────────────────────────
-
-
 async def run_indexing(username: str, token: str, resume_path: str) -> None:
-    """Run the full indexing pipeline.
-
-    Stages:
-      1. Load résumé PDF and fetch GitHub repos.
-      2. Parse résumé and repos into structured dicts.
-      3. Chunk everything into embedding-ready segments.
-      4. Embed all chunks via Gemini.
-      5. Upsert embedded chunks into Supabase (after clearing stale data).
-
-    Args:
-        username: GitHub username whose repos to index.
-        token: GitHub personal access token.
-        resume_path: Local filesystem path to the résumé PDF.
-    """
     # ── Load ───────────────────────────────────
     print("Loading resume PDF...")
     resume_text = loader.load_resume_pdf(resume_path)
@@ -95,21 +66,8 @@ async def run_indexing(username: str, token: str, resume_path: str) -> None:
 
     print("Indexing complete!")
 
-
-# ──────────────────────────────────────────────
-#  2. Query pipeline
-# ──────────────────────────────────────────────
-
-
 async def run_query(query: str) -> str:
-    """Quick test: embed a query and retrieve matching context.
-
-    Args:
-        query: Natural-language question to search for.
-
-    Returns:
-        Formatted context string from the top-5 matching chunks.
-    """
+    
     gemini_client = embedder.get_gemini_client()
     supabase_client = indexer.get_supabase_client()
 
@@ -119,12 +77,6 @@ async def run_query(query: str) -> str:
 
     context = retriever.format_context(chunks)
     return context
-
-
-# ──────────────────────────────────────────────
-#  3. CLI
-# ──────────────────────────────────────────────
-
 
 def main() -> None:
     """Parse CLI arguments and dispatch to the appropriate pipeline."""

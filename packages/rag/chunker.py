@@ -1,22 +1,9 @@
-"""
-chunker.py – RAG pipeline text chunker.
-
-Provides helpers for:
-  • Token-aware text chunking with sentence-boundary splitting.
-  • Structured chunking of parsed résumés and GitHub repos.
-  • Combining all chunks into a single flat list with unique IDs.
-"""
-
 from __future__ import annotations
 
 import re
 from typing import Any
 
 import tiktoken
-
-# ──────────────────────────────────────────────
-#  Encoder (lazily cached)
-# ──────────────────────────────────────────────
 
 _encoder: tiktoken.Encoding | None = None
 
@@ -32,31 +19,12 @@ def _get_encoder() -> tiktoken.Encoding:
 # Sentence-boundary pattern: split *after* a terminator followed by whitespace.
 _SENTENCE_SPLIT: re.Pattern[str] = re.compile(r"(?<=[.!?])[\s]+")
 
-
-# ──────────────────────────────────────────────
-#  1. Core chunking
-# ──────────────────────────────────────────────
-
-
 def chunk_text(
     text: str,
     chunk_size: int = 400,
     overlap: int = 50,
 ) -> list[str]:
-    """Split *text* into token-sized chunks with overlap.
-
-    Uses the ``cl100k_base`` tiktoken encoding for accurate token counting.
-    Splitting is performed on sentence boundaries where possible so that
-    sentences are never cut mid-way if avoidable.
-
-    Args:
-        text: The input text to chunk.
-        chunk_size: Target number of tokens per chunk.
-        overlap: Number of tokens to overlap between consecutive chunks.
-
-    Returns:
-        A list of non-empty string chunks.
-    """
+    
     text = text.strip()
     if not text:
         return []
@@ -111,28 +79,8 @@ def chunk_text(
 
     return [c for c in chunks if c.strip()]
 
-
-# ──────────────────────────────────────────────
-#  2. Résumé chunking
-# ──────────────────────────────────────────────
-
-
 def chunk_resume(parsed_resume: dict[str, Any]) -> list[dict[str, Any]]:
-    """Chunk each section of a parsed résumé separately.
-
-    Also chunks the full raw text under section ``"raw"``.
-
-    Args:
-        parsed_resume: Dict returned by :func:`parser.parse_resume`.
-
-    Returns:
-        List of chunk dicts, each containing:
-
-        - ``text`` – the chunk string.
-        - ``source`` – ``"resume"``.
-        - ``section`` – section name (e.g. ``"experience"``).
-        - ``chunk_index`` – zero-based index within that section.
-    """
+    
     chunks: list[dict[str, Any]] = []
 
     # Chunk individual sections.
@@ -165,34 +113,8 @@ def chunk_resume(parsed_resume: dict[str, Any]) -> list[dict[str, Any]]:
 
     return chunks
 
-
-# ──────────────────────────────────────────────
-#  3. Repo chunking
-# ──────────────────────────────────────────────
-
-
 def chunk_repo(parsed_repo: dict[str, Any]) -> list[dict[str, Any]]:
-    """Chunk a parsed GitHub repo into typed segments.
-
-    Creates:
-      • Multiple README chunks (via :func:`chunk_text`).
-      • One metadata chunk (name + description + languages + stars + tech_stack).
-      • One file-tree chunk (paths joined by newlines).
-      • One commits chunk (messages joined by newlines).
-
-    Args:
-        parsed_repo: Dict returned by :func:`parser.parse_repo`.
-
-    Returns:
-        List of chunk dicts, each containing:
-
-        - ``text`` – the chunk string.
-        - ``source`` – ``"github"``.
-        - ``repo`` – repository name.
-        - ``type`` – one of ``"readme"``, ``"metadata"``, ``"file_tree"``,
-          ``"commits"``.
-        - ``chunk_index`` – zero-based index within that type.
-    """
+    
     repo_name: str = parsed_repo.get("name", "")
     chunks: list[dict[str, Any]] = []
 
@@ -263,29 +185,11 @@ def chunk_repo(parsed_repo: dict[str, Any]) -> list[dict[str, Any]]:
     return chunks
 
 
-# ──────────────────────────────────────────────
-#  4. Combined chunking
-# ──────────────────────────────────────────────
-
-
 def chunk_all(
     parsed_resume: dict[str, Any],
     parsed_repos: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Chunk a résumé and all repos into a single flat list with unique IDs.
-
-    Each chunk receives an ``"id"`` field of the form::
-
-        resume_{section}_{chunk_index}
-        github_{repo}_{type}_{chunk_index}
-
-    Args:
-        parsed_resume: Dict returned by :func:`parser.parse_resume`.
-        parsed_repos: List of dicts returned by :func:`parser.parse_all_repos`.
-
-    Returns:
-        A single flat list of chunk dicts, each with an added ``"id"`` key.
-    """
+    
     all_chunks: list[dict[str, Any]] = []
 
     # Résumé chunks.

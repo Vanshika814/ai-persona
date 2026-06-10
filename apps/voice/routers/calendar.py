@@ -1,17 +1,12 @@
-"""Calendar router for the voice FastAPI backend.
-
-Provides:
-- ``GET /calendar/slots`` — Fetch available Cal.com slots.
-- ``POST /calendar/book`` — Book a Cal.com slot.
-- ``GET /calendar/booking/{booking_id}`` — Retrieve booking details.
-"""
-
 from __future__ import annotations
 
 import logging
+import os
 import traceback
 from datetime import date
 from typing import Any
+
+import httpx
 
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
@@ -23,12 +18,6 @@ logger = logging.getLogger("voice.calendar")
 
 router = APIRouter(prefix="/calendar", tags=["calendar"])
 
-
-# ──────────────────────────────────────────────
-#  Request models
-# ──────────────────────────────────────────────
-
-
 class BookRequest(BaseModel):
     """Request body for booking a slot."""
 
@@ -38,10 +27,12 @@ class BookRequest(BaseModel):
     notes: str = ""
 
 
-# ──────────────────────────────────────────────
-#  Endpoints
-# ──────────────────────────────────────────────
+class ScheduleCallRequest(BaseModel):
+    """Request body for scheduling a call."""
 
+    phone_number: str
+    attendee_name: str
+    datetime_str: str
 
 @router.get("/slots")
 async def get_slots(
@@ -55,15 +46,7 @@ async def get_slots(
         description="Number of days ahead to search for slots.",
     ),
 ) -> dict[str, Any]:
-    """Fetch available Cal.com slots for the given date range.
-
-    Args:
-        date_param: Start date (YYYY-MM-DD). Defaults to today.
-        days_ahead: Number of days to look ahead.
-
-    Returns:
-        ``{"slots": [...], "count": <int>}``
-    """
+    
     if date_param is None:
         date_param = date.today().isoformat()
 
@@ -92,15 +75,7 @@ async def get_slots(
 
 @router.post("/book")
 async def book(body: BookRequest) -> dict[str, Any]:
-    """Book a Cal.com slot.
-
-    Args:
-        body: Parsed ``BookRequest`` with datetime, attendee info, and
-            optional notes.
-
-    Returns:
-        Booking confirmation dict from Cal.com.
-    """
+    
     logger.info(
         "POST /calendar/book — datetime=%s attendee=%s",
         body.datetime_str,
@@ -128,14 +103,7 @@ async def book(body: BookRequest) -> dict[str, Any]:
 
 @router.get("/booking/{booking_id}")
 async def get_booking(booking_id: str) -> dict[str, Any]:
-    """Retrieve details for a specific booking.
-
-    Args:
-        booking_id: The unique booking identifier.
-
-    Returns:
-        Booking details dict from Cal.com.
-    """
+    
     logger.info("GET /calendar/booking/%s", booking_id)
 
     try:
@@ -153,3 +121,67 @@ async def get_booking(booking_id: str) -> dict[str, Any]:
             status_code=500,
             content={"error": str(exc)},
         )
+
+
+@router.post("/schedule-call")
+async def schedule_call(body: ScheduleCallRequest) -> dict[str, Any]:
+    
+    logger.info(
+        "POST /calendar/schedule-call — phone=%s attendee=%s datetime=%s",
+        body.phone_number,
+        body.attendee_name,
+        body.datetime_str,
+    )
+
+    vapi_api_key = os.getenv("VAPI_API_KEY")
+    vapi_phone_number_id = os.getenv("VAPI_PHONE_NUMBER_ID")
+    vapi_outbound_assistant_id = os.getenv("VAPI_OUTBOUND_ASSISTANT_ID")
+
+    if not vapi_api_key or not vapi_phone_number_id or not vapi_outbound_assistant_id:
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Vapi environment variables (VAPI_API_KEY, VAPI_PHONE_NUMBER_ID, VAPI_OUTBOUND_ASSISTANT_ID) are not set."
+            },
+        )
+
+    headers = {
+        "Authorization": f"Bearer {vapi_api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "phoneNumberId": vapi_phone_number_id,
+        "assistantId": vapi_outbound_assistant_id,
+        "customer": {
+            "number": body.phone_number,
+            "name": body.attendee_name,
+        },
+        "assistantOverrides": {
+            "variableValues": {
+                "attendee_name": body.attendee_name,
+                "scheduled_time": body.datetime_str,
+            }
+        },
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(
+                "https://api.vapi.ai/call/phone",
+                headers=headers,
+                json=payload,
+            )
+            response_json = response.json()
+            if not response.is_success:
+                error_msg = response_json.get("error", {}).get("message") or response.text
+                return JSONResponse(
+                    status_code=response.status_code,
+                    content={"error": f"Vapi API returned error: {error_msg}"},
+                )
+            return {"success": True, "call_id": response_json.get("id")}
+        except Exception as exc:
+            logger.error("POST /calendar/schedule-call failed: %s\n%s", exc, traceback.format_exc())
+            return JSONResponse(
+                status_code=500,
+                content={"error": f"API request failed: {exc}"},
+            )

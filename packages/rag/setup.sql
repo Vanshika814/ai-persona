@@ -1,9 +1,4 @@
--- ============================================================
 -- RAG Pipeline – Supabase Setup
--- ============================================================
--- Run this script ONCE in the Supabase SQL Editor to set up
--- the pgvector extension, documents table, and HNSW index.
--- ============================================================
 
 -- 1. Enable the pgvector extension
 CREATE EXTENSION IF NOT EXISTS vector;

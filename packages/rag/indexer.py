@@ -19,16 +19,7 @@ load_dotenv()
 
 
 def get_supabase_client() -> Client:
-    """Create and return a configured Supabase client.
-
-    Reads SUPABASE_URL and SUPABASE_SERVICE_KEY from environment.
-
-    Returns:
-        A configured supabase.Client instance.
-
-    Raises:
-        ValueError: If either environment variable is missing.
-    """
+    
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_SERVICE_KEY")
 
@@ -44,41 +35,10 @@ def get_supabase_client() -> Client:
 
     return create_client(url, key)
 
-
-# ──────────────────────────────────────────────
-#  Constants
-# ──────────────────────────────────────────────
-
 UPSERT_BATCH_SIZE = 50
 
-
-# ──────────────────────────────────────────────
-#  2. Upsert
-# ──────────────────────────────────────────────
-
-
 def upsert_chunks(chunks: list[dict[str, Any]], client: Client) -> int:
-    """Upsert embedded chunks into the ``documents`` table.
-
-    Each chunk dict is expected to contain at least:
-      - ``id`` — deterministic unique identifier
-      - ``text`` — chunk text
-      - ``embedding`` — list of floats (1536-d vector)
-      - ``source`` — ``"resume"`` or ``"github"``
-
-    All remaining keys (``section``, ``repo``, ``type``, ``chunk_index``,
-    etc.) are stored in the ``metadata`` JSONB column.
-
-    Chunks are upserted in batches of :data:`UPSERT_BATCH_SIZE`.
-
-    Args:
-        chunks: List of embedded chunk dicts from
-            :func:`embedder.embed_chunks`.
-        client: A configured :class:`supabase.Client`.
-
-    Returns:
-        The number of chunks successfully upserted.
-    """
+    
     total = len(chunks)
     upserted = 0
 
@@ -114,21 +74,8 @@ def upsert_chunks(chunks: list[dict[str, Any]], client: Client) -> int:
     return upserted
 
 
-# ──────────────────────────────────────────────
-#  4. Delete by source
-# ──────────────────────────────────────────────
-
-
 def delete_by_source(source: str, client: Client) -> None:
-    """Delete all documents matching a given *source*.
-
-    Useful for clearing stale data before re-indexing (e.g. passing
-    ``"resume"`` or ``"github"``).
-
-    Args:
-        source: The source value to match (``"resume"`` or ``"github"``).
-        client: A configured :class:`supabase.Client`.
-    """
+    
     try:
         client.table("documents").delete().eq("source", source).execute()
         print(f"Deleted all documents with source='{source}'.")

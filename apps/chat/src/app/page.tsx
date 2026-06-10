@@ -3,20 +3,11 @@
 import { useState, useRef, useEffect, useCallback, type FormEvent, type KeyboardEvent } from "react";
 import ReactMarkdown from "react-markdown";
 
-/* ──────────────────────────────────────────────
-   Types
-   ────────────────────────────────────────────── */
-
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
 }
-
-/* ──────────────────────────────────────────────
-   Constants
-   ────────────────────────────────────────────── */
-
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
 
@@ -27,26 +18,16 @@ const WELCOME_MESSAGE: Message = {
     "Hi! I'm Vanshika's AI representative. Ask me about her background, projects, or schedule an interview.",
 };
 
-/* ──────────────────────────────────────────────
-   Avatar component
-   ────────────────────────────────────────────── */
-
 function AiAvatar({ animate }: { animate?: boolean }) {
   return (
     <div
-      className={`flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-accent-soft text-accent text-sm font-bold select-none ${
-        animate ? "avatar-glow" : ""
-      }`}
+      className={`flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-accent-soft text-accent text-sm font-bold select-none ${animate ? "avatar-glow" : ""
+        }`}
     >
       V
     </div>
   );
 }
-
-/* ──────────────────────────────────────────────
-   Typing indicator
-   ────────────────────────────────────────────── */
-
 function TypingIndicator() {
   return (
     <div className="flex items-end gap-3 animate-fade-in">
@@ -59,10 +40,6 @@ function TypingIndicator() {
     </div>
   );
 }
-
-/* ──────────────────────────────────────────────
-   Send icon
-   ────────────────────────────────────────────── */
 
 function SendIcon() {
   return (
@@ -77,242 +54,57 @@ function SendIcon() {
   );
 }
 
+
+
 interface Slot {
-  date: string;
-  time: string;
-  datetime: string;
   display: string;
+  id: string;
 }
 
-function SchedulerWidget() {
-  const [slots, setSlots] = useState<Slot[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [notes, setNotes] = useState("");
-  const [bookingLoading, setBookingLoading] = useState(false);
-  const [bookingResult, setBookingResult] = useState<{
-    success: boolean;
-    meet_link?: string;
-    confirmation_message?: string;
-    error?: string;
-  } | null>(null);
+function parseSlots(content: string): { cleanContent: string; slots: Slot[] } {
+  const slots: Slot[] = [];
+  const lines = content.split("\n");
+  const cleanLines: string[] = [];
 
-  // Fetch slots on mount
-  const fetchSlots = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`${BACKEND_URL}/calendar/slots`);
-      if (!res.ok) throw new Error("Failed to load slots");
-      const data = await res.json();
-      setSlots(data.slots || []);
-    } catch (err) {
-      setError("Unable to retrieve available slots. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const slotRegex = /^[-*•]\s*(.*?)\s*\[id:\s*(.*?)\]$/;
 
-  useEffect(() => {
-    fetchSlots();
-  }, []);
-
-  const handleBook = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!selectedSlot || !name || !email) return;
-
-    setBookingLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/calendar/book`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          datetime_str: selectedSlot.datetime,
-          attendee_name: name,
-          attendee_email: email,
-          notes,
-        }),
+  for (const line of lines) {
+    const match = line.trim().match(slotRegex);
+    if (match) {
+      slots.push({
+        display: match[1].trim(),
+        id: match[2].trim(),
       });
-      const data = await res.json();
-      setBookingResult(data);
-    } catch (err) {
-      setBookingResult({
-        success: false,
-        error: "Booking failed. Please check your internet connection and try again.",
-      });
-    } finally {
-      setBookingLoading(false);
+    } else {
+      cleanLines.push(line);
     }
+  }
+
+  let cleanContent = cleanLines.join("\n").trim();
+  cleanContent = cleanContent.replace(/\n{3,}/g, "\n\n");
+
+  return {
+    cleanContent,
+    slots,
   };
-
-  if (loading) {
-    return (
-      <div className="mt-3 p-4 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col items-center gap-3 w-full">
-        <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-        <span className="text-xs text-muted">Checking availability...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="mt-3 p-4 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col items-center gap-2 w-full">
-        <span className="text-xs text-error text-center">{error}</span>
-        <button
-          type="button"
-          onClick={fetchSlots}
-          className="text-xs text-accent font-semibold hover:underline"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  if (bookingResult?.success) {
-    return (
-      <div className="mt-3 p-5 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col items-center text-center gap-3 animate-fade-in w-full">
-        <div className="w-10 h-10 bg-success/10 text-success rounded-full flex items-center justify-center font-bold text-lg">
-          ✓
-        </div>
-        <div className="space-y-1">
-          <h4 className="text-sm font-bold text-[#1E1B4B]">Meeting Confirmed!</h4>
-          <p className="text-xs text-muted">{bookingResult.confirmation_message}</p>
-        </div>
-        {bookingResult.meet_link && (
-          <a
-            href={bookingResult.meet_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-white text-xs font-semibold rounded-xl hover:bg-accent-hover transition-colors shadow-sm"
-          >
-            Join Google Meet
-          </a>
-        )}
-        <p className="text-[10px] text-muted">A calendar invitation & confirmation email have been sent.</p>
-      </div>
-    );
-  }
-
-  if (selectedSlot) {
-    return (
-      <div className="mt-3 p-5 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col gap-4 animate-fade-in w-full text-left">
-        <div className="flex items-center justify-between border-b border-border-light pb-2">
-          <h4 className="text-xs font-bold text-[#1E1B4B]">Enter Booking Details</h4>
-          <button
-            type="button"
-            onClick={() => setSelectedSlot(null)}
-            className="text-[11px] text-muted hover:text-foreground font-medium"
-          >
-            ← Change Time
-          </button>
-        </div>
-        <div className="space-y-1 bg-accent-soft/45 p-2.5 rounded-xl border border-accent/10">
-          <span className="text-[10px] uppercase font-bold text-accent tracking-wider block">Selected Slot</span>
-          <span className="text-xs font-semibold text-[#1e1b4b]">{selectedSlot.display}</span>
-        </div>
-        <form onSubmit={handleBook} className="space-y-3">
-          <div>
-            <label className="block text-[11px] font-semibold text-[#374151] mb-1">Name</label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your Name"
-              className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent bg-background text-[#1f2937]"
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] font-semibold text-[#374151] mb-1">Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent bg-background text-[#1f2937]"
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] font-semibold text-[#374151] mb-1">Notes (Optional)</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="What would you like to discuss?"
-              rows={2}
-              className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent bg-background resize-none text-[#1f2937]"
-            />
-          </div>
-          {bookingResult?.error && (
-            <div className="text-xs text-error font-medium">{bookingResult.error}</div>
-          )}
-          <button
-            type="submit"
-            disabled={bookingLoading}
-            className="w-full py-2.5 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-xl disabled:opacity-50 transition-colors shadow-md flex items-center justify-center gap-1.5"
-          >
-            {bookingLoading ? (
-              <>
-                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Booking...
-              </>
-            ) : (
-              "Confirm Interview"
-            )}
-          </button>
-        </form>
-      </div>
-    );
-  }
-
-  // Group slots by date
-  const groupedSlots: { [key: string]: Slot[] } = {};
-  slots.forEach((slot) => {
-    const dateStr = slot.display.split(" at ")[0];
-    if (!groupedSlots[dateStr]) groupedSlots[dateStr] = [];
-    groupedSlots[dateStr].push(slot);
-  });
-
-  return (
-    <div className="mt-3 p-4 bg-white rounded-2xl border border-border-light shadow-sm flex flex-col gap-3 animate-fade-in max-h-[300px] overflow-y-auto w-full text-left">
-      <h4 className="text-xs font-bold text-[#1E1B4B] border-b border-border-light pb-2">Select a Time Slot</h4>
-      {slots.length === 0 ? (
-        <span className="text-xs text-muted text-center py-2">No available slots found on Cal.com.</span>
-      ) : (
-        <div className="space-y-3">
-          {Object.entries(groupedSlots).map(([dateLabel, slotList]) => (
-            <div key={dateLabel} className="space-y-1.5">
-              <span className="text-[10px] uppercase font-bold text-muted tracking-wider block">{dateLabel}</span>
-              <div className="grid grid-cols-2 gap-1.5">
-                {slotList.map((slot) => {
-                  const timeLabel = slot.display.split(" at ")[1]?.replace(" IST", "") || slot.time;
-                  return (
-                    <button
-                      key={slot.datetime}
-                      type="button"
-                      onClick={() => setSelectedSlot(slot)}
-                      className="px-2.5 py-1.5 text-xs font-medium text-accent bg-accent-soft rounded-lg hover:bg-accent hover:text-white transition-all text-center select-none active:scale-[0.98]"
-                    >
-                      {timeLabel}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
-/* ──────────────────────────────────────────────
-   Main chat page
-   ────────────────────────────────────────────── */
+function formatSlotDisplay(display: string): string {
+  try {
+    const parts = display.split(",");
+    if (parts.length >= 2) {
+      const datePart = parts[0].trim();
+      const timeMatch = parts[1].match(/at\s+(.*?)\s*(?:IST|$)/i);
+      if (timeMatch) {
+        const timePart = timeMatch[1].trim();
+        return `${datePart} • ${timePart}`;
+      }
+    }
+  } catch (e) {
+    // fallback
+  }
+  return display;
+}
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
@@ -345,18 +137,16 @@ export default function ChatPage() {
   }
 
   /* ── Send message via SSE ── */
-  async function handleSend() {
-    const text = input.trim();
-    if (!text || isStreaming) return;
+  async function submitMessage(contentToSend: string) {
+    if (isStreaming) return;
 
     setError(null);
-    setInput("");
 
     // Add user message
     const userMsg: Message = {
       id: `user-${Date.now()}`,
       role: "user",
-      content: text,
+      content: contentToSend,
     };
     const history = buildHistory();
     setMessages((prev) => [...prev, userMsg]);
@@ -372,7 +162,7 @@ export default function ChatPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: text,
+          message: contentToSend,
           conversation_history: history,
         }),
       });
@@ -392,28 +182,43 @@ export default function ChatPage() {
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-
+        console.log("RAW BUFFER:");
+        console.log(buffer);
         // Process complete SSE lines
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? ""; // keep incomplete line in buffer
+        const events = buffer.split("\n\n");
+        buffer = events.pop() ?? ""; // keep incomplete event
 
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          const payload = line.slice(6); // strip "data: "
+        for (const event of events) {
+          const payload = event
+            .split("\n")
+            .map((line) =>
+              line.startsWith("data: ")
+                ? line.slice(6)
+                : line
+            )
+            .join("\n");
+
+          if (!payload) continue;
 
           if (payload === "[DONE]") {
-            break;
+            continue;
           }
 
           if (payload.startsWith("[ERROR]")) {
             setError(payload.slice(8));
-            break;
+            continue;
           }
-
-          // Append chunk to the AI message
+          console.log("PAYLOAD:");
+          console.log(payload);
           setMessages((prev) =>
             prev.map((m) =>
-              m.id === aiId ? { ...m, content: m.content + payload } : m
+              m.id === aiId
+                ? {
+                  ...m, content: m.content.length === 0
+                    ? payload
+                    : m.content + "\n\n" + payload
+                }
+                : m
             )
           );
         }
@@ -433,6 +238,23 @@ export default function ChatPage() {
       setIsStreaming(false);
       inputRef.current?.focus();
     }
+  }
+
+  async function handleSend() {
+    const text = input.trim();
+    if (!text || isStreaming) return;
+    setInput("");
+    await submitMessage(text);
+  }
+
+  async function handleSelectSlot(slot: Slot) {
+    const content = `Confirming slot: ${slot.display} [id: ${slot.id}]`;
+    await submitMessage(content);
+  }
+
+  function isLastAssistantMessage(msgId: string): boolean {
+    const assistantMsgs = messages.filter((m) => m.role === "assistant");
+    return assistantMsgs.length > 0 && assistantMsgs[assistantMsgs.length - 1].id === msgId;
   }
 
   /* ── Form / keyboard handlers ── */
@@ -457,9 +279,6 @@ export default function ChatPage() {
     }
   }
 
-  /* ──────────────────────────────────────────────
-     Render
-     ────────────────────────────────────────────── */
 
   return (
     <div className="min-h-screen w-full bg-background py-12 px-4 sm:px-6 md:px-8 overflow-y-auto flex flex-col justify-start items-center">
@@ -500,54 +319,65 @@ export default function ChatPage() {
           ref={scrollRef}
           className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-white/40"
         >
-          {messages.map((msg) => {
-            const hasWidget = msg.role === "assistant" && msg.content.includes("[SCHEDULER_WIDGET]");
-            const cleanContent = hasWidget
-              ? msg.content.replace("[SCHEDULER_WIDGET]", "").trim()
-              : msg.content;
-
-            return (
-              <div
-                key={msg.id}
-                className={`flex animate-fade-in ${
-                  msg.role === "user" ? "justify-end" : "items-end gap-3"
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex animate-fade-in ${msg.role === "user" ? "justify-end" : "items-end gap-3"
                 }`}
-              >
-                {/* AI avatar */}
-                {msg.role === "assistant" && <AiAvatar />}
+            >
+              {/* AI avatar */}
+              {msg.role === "assistant" && <AiAvatar />}
 
-                {/* Bubble container to hold text bubble and/or widget */}
-                <div className="flex flex-col max-w-[80%] sm:max-w-[70%]">
-                  {cleanContent && (
+              {/* Bubble container to hold text bubble */}
+              <div className="flex flex-col max-w-[80%] sm:max-w-[70%]">
+                {msg.content && (
+                  <>
                     <div
-                      className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap break-words shadow-sm ${
-                        msg.role === "user"
-                          ? "bg-user-bubble text-user-bubble-text rounded-2xl rounded-br-none"
-                          : "bg-ai-bubble text-ai-bubble-text rounded-2xl rounded-bl-none border border-border-light"
-                      }`}
+                      className={`px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap break-words shadow-sm ${msg.role === "user"
+                        ? "bg-user-bubble text-user-bubble-text rounded-2xl rounded-br-none"
+                        : "bg-ai-bubble text-ai-bubble-text rounded-2xl rounded-bl-none border border-border-light"
+                        }`}
                     >
                       {msg.role === "assistant" ? (
                         <ReactMarkdown
                           components={{
-                            p: ({children}) => <p style={{margin: '0 0 6px 0'}}>{children}</p>,
-                            ul: ({children}) => <ul style={{margin: '4px 0', paddingLeft: '16px'}}>{children}</ul>,
-                            li: ({children}) => <li style={{marginBottom: '2px'}}>{children}</li>,
-                            strong: ({children}) => <strong style={{fontWeight: 500}}>{children}</strong>,
+                            p: ({ children }) => <p style={{ margin: '0 0 6px 0' }}>{children}</p>,
+                            ul: ({ children }) => <ul style={{ margin: '4px 0', paddingLeft: '16px' }}>{children}</ul>,
+                            li: ({ children }) => <li style={{ marginBottom: '2px' }}>{children}</li>,
+                            strong: ({ children }) => <strong style={{ fontWeight: 500 }}>{children}</strong>,
                           }}
                         >
-                          {cleanContent}
+                          {parseSlots(msg.content).cleanContent}
                         </ReactMarkdown>
                       ) : (
-                        cleanContent
+                        msg.content.replace(/^Confirming slot:\s*/, "").replace(/\s*\[id:\s*.*?\]$/, "")
                       )}
                     </div>
-                  )}
 
-                  {hasWidget && <SchedulerWidget />}
-                </div>
+                    {/* Render slot buttons if it's an assistant message with slots */}
+                    {msg.role === "assistant" && (() => {
+                      const { slots } = parseSlots(msg.content);
+                      if (slots.length === 0) return null;
+                      return (
+                        <div className="mt-3 flex flex-col gap-2 w-full">
+                          {slots.map((slot) => (
+                            <button
+                              key={slot.id}
+                              disabled={isStreaming || !isLastAssistantMessage(msg.id)}
+                              onClick={() => handleSelectSlot(slot)}
+                              className="w-full text-center px-4 py-2.5 rounded-xl border border-accent/20 bg-accent-soft text-accent hover:bg-accent hover:text-white transition-all text-sm font-semibold shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+                            >
+                              [ {formatSlotDisplay(slot.display)} ]
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
 
           {/* Typing indicator */}
           {isStreaming &&

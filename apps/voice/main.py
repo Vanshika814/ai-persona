@@ -20,20 +20,12 @@ from routers.vapi import router as vapi_router
 from services.llm import check_health as check_llm_health
 from services.rag import check_health as check_rag_health
 
-# ──────────────────────────────────────────────
-#  Logging
-# ──────────────────────────────────────────────
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
 )
 
 logger = logging.getLogger("voice")
-
-# ──────────────────────────────────────────────
-#  App
-# ──────────────────────────────────────────────
 
 app = FastAPI(title="Vanshika AI Persona Backend")
 
@@ -48,11 +40,6 @@ app.add_middleware(
 app.include_router(chat_router)
 app.include_router(calendar_router)
 app.include_router(vapi_router)
-
-
-# ──────────────────────────────────────────────
-#  Root & placeholders
-# ──────────────────────────────────────────────
 
 
 @app.get("/")
@@ -79,12 +66,6 @@ async def health() -> JSONResponse:
 
     status_code = 200 if is_healthy else 503
     return JSONResponse(status_code=status_code, content=content)
-
-
-
-# ──────────────────────────────────────────────
-#  Entry point
-# ──────────────────────────────────────────────
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "8000"))
