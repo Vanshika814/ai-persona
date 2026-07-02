@@ -10,6 +10,16 @@ The Vanshika AI Persona project is a comprehensive application that utilizes nat
 - **Chat Interface**: A streaming response for chat messages with RAG-augmented context.
 - **Note:** **Outbound calling** is fully integrated through Vapi. During testing, the free Vapi phone number could successfully authenticate and initiate outbound call requests. However, Vapi's free phone numbers do not support international calling, so calls to Indian numbers require either a paid Vapi number or an imported Twilio number. **The integration is complete and can be verified using supported US phone numbers.**
 
+## RAG Pipeline
+
+- **Embedding model:** Gemini `gemini-embedding-001` with 768 dimensions
+- **Vector DB:** Supabase pgvector with HNSW index
+- **Chunking:** Token-aware chunking (400 tokens, 50 token overlap) using tiktoken
+- **Retrieval:** Cosine similarity search via `match_documents` SQL function
+- **Sources:** Resume PDF + 21 GitHub repos (READMEs, commits, file structure)
+- **Total chunks:** 137 chunks indexed
+- **Similarity threshold:** 0.4
+- **Top-k:** 5 chunks per query
 
 ## 🛠️ Tech Stack
 - **Frontend**: Nextjs, React
